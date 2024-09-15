@@ -13,35 +13,15 @@ public class DBConnectSQL {
 	private final String userID = "sa";
 	private final String password = "123456";
 
-	public Connection getConnection() {
-		Connection conn = null;
-		try {
+	public Connection getConnection() throws Exception {
 			String url = "jdbc:sqlserver://" + serverName + ":" + portNumber + "\\" + instance + ";databaseName="
 					+ dbName;
 			if (instance == null || instance.trim().isEmpty())
 				url = "jdbc:sqlserver://" + serverName  + ";databaseName=" + dbName;
-			conn = DriverManager.getConnection(url, userID, password);
-			if (conn != null) {
-				DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-				System.out.println("Driver name: " + dm.getDriverName());
-				System.out.println("Driver version: " + dm.getDriverVersion());
-				System.out.println("Product name: " + dm.getDatabaseProductName());
-				System.out.println("Product version: " + dm.getDatabaseProductVersion());
-
-				return conn;
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} /*finally {
-			try {
-				if (conn != null && !conn.isClosed()) {
-					conn.close();
-				}
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-		}*/
-		return conn;
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			return DriverManager.getConnection(url, userID, password);
+					
+		
 	}
 
 	public static void main(String[] args) {
