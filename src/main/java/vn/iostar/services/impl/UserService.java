@@ -33,14 +33,15 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public boolean register(String username, String password, String email, String fullname, String phone) {
+	public UserModel register(String username, String password, String email, String fullname, String phone) {
 		if (userDao.checkExistUsername(username)) {
-			return false;
+			return null;
 		}
 		long millis = System.currentTimeMillis();
 		java.sql.Date date = new java.sql.Date(millis);
-		userDao.insert(new UserModel(username, password, null, fullname, email, phone, 1, date));
-		return true;
+		UserModel user = new UserModel(username, password, null, fullname, email, phone, 1, date);
+		userDao.insert(user);
+		return user;
 	}
 
 	@Override
@@ -63,6 +64,17 @@ public class UserService implements IUserService {
 	public void update(String pw, String email) {
 		userDao.update(pw, email);
 		
+	}
+
+	@Override
+	public void updateacc(int id, String images, String fullname, String phone) {
+		userDao.updateacc(id, images, fullname, phone);
+		
+	}
+
+	@Override
+	public UserModel FindById(int id) {
+		return userDao.findById(id);
 	}
 
 }

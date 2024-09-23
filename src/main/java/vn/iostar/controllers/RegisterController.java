@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import vn.iostar.models.UserModel;
 import vn.iostar.services.impl.UserService;
 import vn.iostar.utils.Constant;
 
@@ -19,22 +21,15 @@ public class RegisterController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		/*HttpSession session = req.getSession(false);
-		if (session != null && session.getAttribute("username") != null) {
-			resp.sendRedirect(req.getContextPath() + "/admin");
-			return;
-		}
-		Cookie[] cookies = req.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("username")) {
-					session = req.getSession(true);
-					session.setAttribute("username", cookie.getValue());
-					resp.sendRedirect(req.getContextPath() + "/admin");
-					return;
-				}
-			}
-		}*/
+		/*
+		 * HttpSession session = req.getSession(false); if (session != null &&
+		 * session.getAttribute("username") != null) {
+		 * resp.sendRedirect(req.getContextPath() + "/admin"); return; } Cookie[]
+		 * cookies = req.getCookies(); if (cookies != null) { for (Cookie cookie :
+		 * cookies) { if (cookie.getName().equals("username")) { session =
+		 * req.getSession(true); session.setAttribute("username", cookie.getValue());
+		 * resp.sendRedirect(req.getContextPath() + "/admin"); return; } } }
+		 */
 		req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
 	}
 
@@ -61,14 +56,22 @@ public class RegisterController extends HttpServlet {
 			req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
 			return;
 		}
-		boolean isSuccess = service.register(username, password, email, fullname, phone);
-		if (isSuccess) {
+		if (service.checkExistPhone(phone)) {
+			alertMsg = "Số điện thoại đã tồn tại!";
+			req.setAttribute("alert", alertMsg);
+			req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
+			return;
+		}
+		UserModel user = service.register(username, password, email, fullname, phone);
+		if (user != null) {
 			// SendMail sm = new SendMail();
 			// sm.sendMail(email, "Shopping.iotstar.vn", "Welcome to Shopping. Please Login
 			// to use service. Thanks !");
 			alertMsg = "Tạo thành công!";
 			req.setAttribute("alert", alertMsg);
-			resp.sendRedirect(req.getContextPath() + "/login");
+		    HttpSession session = req.getSession(true); 
+		    session.setAttribute("account", user);
+			resp.sendRedirect(req.getContextPath() + "/waiting");
 		} else {
 			alertMsg = "System error!";
 			req.setAttribute("alert", alertMsg);
