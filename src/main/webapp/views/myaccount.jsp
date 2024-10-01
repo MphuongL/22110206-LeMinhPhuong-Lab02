@@ -21,7 +21,9 @@
 								<div class="fileinput fileinput-new" data-provides="fileinput">
 									<div class="fileinput-new thumbnail"
 										style="width: 200px; height: 150px; margin-left: 170px;">
-										<img src="upload/${account.images}" alt="Ảnh mô tả" style="width: 100%; height: 100%;" />
+										<img
+											src="/lab02/upload/${account.images}"
+											alt="Ảnh mô tả" style="width: 100%; height: 100%;" />
 
 									</div>
 									<div class="form-group">
